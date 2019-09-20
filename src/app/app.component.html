@@ -1,80 +1,81 @@
-<nav class="navbar sticky-top text-white">
-  <div class="container">
-    <a class="navbar-brand">
-      <img src="../favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
-      Flickr Photo Search
-    </a>
-    <form class="form-inline">
-      <input [formControl]="inputQuery"  class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button (click)="searchQuery()" class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
-
-<div class="container ">
-  <div class="d-flex mt-4" *ngIf="totalResults > 0">
-    <p class="mb-0">Results for <i>"{{ inputResult }}"</i></p>
-    <p class="ml-auto mb-0 text-info">Showing {{ totalResults | number }} results</p>
-  </div>
-
-  <h5 class="mx-auto mt-5" *ngIf="totalResults == 0">No Results</h5>
-
-  <div class=" mt-5 spinner-border text-info" *ngIf="isLoading" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-
-  <div class="card-columns mt-4">
-    <div class="card" *ngFor="let list of inputList">
-      <a data-toggle="modal" data-target="#photoModal" (click)="photoInfo(list.id)">
-        <div class="searched-image">
-          <img class="card-img-top hoverable" [src]="getPhotoUrl(list)" alt="Card image">
-        </div>
+  <nav class="navbar sticky-top text-white">
+    <div class="container">
+      <a class="navbar-brand">
+        <img src="../favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
+        Flickr Photo Search
       </a>
+      <form class="form-inline">
+        <p class="my-auto mr-3 text-danger">{{ inputRequired }}</p>
+        <input [formControl]="inputQuery" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button (click)="searchQuery()" class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>
     </div>
-  </div>
-
-  <!-- Pagination -->
-  <nav class="mt-4 mb-5" aria-label="Search Pagination" *ngIf="pageNumber > 0">
-    <ul class="pagination justify-content-end">
-      <li class="page-item" [ngClass]="{'disabled': pageNumber <= 1}">
-        <a class="page-link" href="javascript:void(0);" (click)="pageNumber=pageNumber-1; pagination()">Previous</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="javascript:void(0);" (click)="pageNumber=pageNumber+1; pagination()">Next</a>
-      </li>
-    </ul>
   </nav>
 
-  <!-- Modal for Photo Details-->
-  <div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="photoDetail" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="photoDetail">Photo Details</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body mt-3"  *ngIf="selectedPhoto != null">
-          <img class="card-img-top hoverable" [src]="showPhoto()" alt="Card image">
-          <div class="col mt-3">
-            <div class="row">
-              <h5 class="col-sm-4">{{ selectedPhoto.title._content }}</h5>
-              <p class="col">by {{ selectedPhoto.owner.username }}</p>
-            </div>
-            <div class="row">
-              <p class="col-sm-4">Taken</p>
-              <p class="col"><b>{{ selectedPhoto.dates.taken |  date:'MMMM d, y' }}</b></p>
-            </div>
-            <div class="row">
-              <p class="col-sm-4">Views</p>
-              <p class="col"><b>{{ selectedPhoto.views | number}}</b></p>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+  <div class="container ">
+    <div class="d-flex mt-4" *ngIf="totalResults > 0">
+      <p class="mb-0">Results for <i>"{{ inputResult }}"</i></p>
+      <p class="ml-auto mb-0 text-info">Showing {{ totalResults | number }} results</p>
+    </div>
+
+    <h5 class="mx-auto mt-5" *ngIf="totalResults == 0">You searched for <i>"{{ inputResult }}"</i>. No matching items found.</h5>
+
+    <div class=" mt-5 spinner-border text-info" *ngIf="isLoading" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+
+    <div class="card-columns mt-4">
+      <div class="card" *ngFor="let list of inputList">
+        <a data-toggle="modal" data-target="#photoModal" (click)="photoInfo(list.id)">
+          <div class="searched-image">
+            <img class="card-img-top hoverable" [src]="getPhotoUrl(list)" alt="Card image">
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="mt-4 mb-5" aria-label="Search Pagination" *ngIf="pageNumber > 0 && totalResults > 9">
+      <ul class="pagination justify-content-end">
+        <li class="page-item" [ngClass]="{'disabled': pageNumber <= 1}">
+          <a class="page-link" href="javascript:void(0);"  (click)="pageNumber=pageNumber-1; pagination()">Previous</a>
+        </li>
+        <li class="page-item" [ngClass]="{'disabled': pageNumber == totalPage}">
+          <a class="page-link" href="javascript:void(0);" (click)="pageNumber=pageNumber+1; pagination()">Next</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Modal for Photo Details-->
+    <div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="photoDetail" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="photoDetail">Photo Details</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body mt-3"  *ngIf="selectedPhoto != null">
+            <img class="card-img-top hoverable" [src]="showPhoto()" alt="Card image">
+            <div class="col mt-3">
+              <div class="row">
+                <h5 class="col-sm-4">{{ selectedPhoto.title._content }}</h5>
+                <p class="col">by {{ selectedPhoto.owner.username }}</p>
+              </div>
+              <div class="row">
+                <p class="col-sm-4">Taken</p>
+                <p class="col"><b>{{ selectedPhoto.dates.taken |  date:'MMMM d, y' }}</b></p>
+              </div>
+              <div class="row">
+                <p class="col-sm-4">Views</p>
+                <p class="col"><b>{{ selectedPhoto.views | number}}</b></p>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
