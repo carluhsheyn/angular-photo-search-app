@@ -1,6 +1,6 @@
-# AngularPhotoApp
+# Angular Photo Search App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.5.
+A simple Angular 8 photo search using flickr api.
 
 ## Development server
 
