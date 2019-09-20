@@ -1,35 +1,31 @@
-<!-- Image and text -->
-<nav class="navbar">
+<nav class="navbar sticky-top text-white">
   <div class="container">
-    <a class="navbar-brand text-white" href="#">
-    <img src="https://cdn.jsdelivr.net/gh/carluhsheyn/angular-photo-app@master/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
-    Angular Photo App
-  </a>
-  <form class="form-inline my-2 my-lg-0">
-      <input [formControl]="inputQuery" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
-      <button (click)="searchQuery()" class="btn btn-outline-secondary my-2 my-sm-0" type="submit" >Search</button>
+    <a class="navbar-brand">
+      <img src="../favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
+      Flickr Photo Search
+    </a>
+    <form class="form-inline">
+      <input [formControl]="inputQuery"  class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button (click)="searchQuery()" class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
   </div>
 </nav>
 
-<div class="container">
-  <div class="d-flex mt-4" *ngIf="totalResults > 0" >
-    <p>Result for  <i>"{{ inputResult }}"</i></p>
-    <p class="ml-auto">Showing {{ totalResults | number }} results</p>
+<div class="container ">
+  <div class="d-flex mt-4" *ngIf="totalResults > 0">
+    <p class="mb-0">Results for <i>"{{ inputResult }}"</i></p>
+    <p class="ml-auto mb-0 text-info">Showing {{ totalResults | number }} results</p>
   </div>
 
-  <div class="spinner-border text-info" *ngIf="isLoading" role="status">
+  <h5 class="mx-auto mt-5" *ngIf="totalResults == 0">No Results</h5>
+
+  <div class=" mt-5 spinner-border text-info" *ngIf="isLoading" role="status">
     <span class="sr-only">Loading...</span>
   </div>
 
-  <h6 *ngIf="totalResults == 0"> NO RESULT</h6>
-
-  <h6>{{inputRequired}}</h6>
-
-  <!-- Masonry Layout Cards -->
-   <div class="card-columns mt-4">
+  <div class="card-columns mt-4">
     <div class="card" *ngFor="let list of inputList">
-      <a data-toggle="modal" data-target="#photoModal" id="photoInfo(list.id)" (click)="photoInfo(list.id)">
+      <a data-toggle="modal" data-target="#photoModal" (click)="photoInfo(list.id)">
         <div class="searched-image">
           <img class="card-img-top hoverable" [src]="getPhotoUrl(list)" alt="Card image">
         </div>
@@ -38,49 +34,45 @@
   </div>
 
   <!-- Pagination -->
-  <nav class="mt-4 mb-5" aria-label="Search Pagination" *ngIf="totalResults > 0">
-    <ul class="pagination justify-content-center">
-      <li class="page-item" [ngClass]="{'disabled': pageNumber == 1}">
+  <nav class="mt-4 mb-5" aria-label="Search Pagination" *ngIf="pageNumber > 0">
+    <ul class="pagination justify-content-end">
+      <li class="page-item" [ngClass]="{'disabled': pageNumber <= 1}">
         <a class="page-link" href="javascript:void(0);" (click)="pageNumber=pageNumber-1; pagination()">Previous</a>
       </li>
-      <li class="page-item" >
-        <a class="page-link" href="javascript:void(0);" (click)="pageNumber=pageNumber+1; pagination()" >Next</a>
+      <li class="page-item">
+        <a class="page-link" href="javascript:void(0);" (click)="pageNumber=pageNumber+1; pagination()">Next</a>
       </li>
     </ul>
   </nav>
 
-  <!-- Photo Detail Modal -->
-  <div class="modal fade show" id="photoModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+  <!-- Modal for Photo Details-->
+  <div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="photoDetail" aria-hidden="true">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          Photo Details
-           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+          <h5 class="modal-title" id="photoDetail">Photo Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-
-        <div class="modal-body" *ngIf="selectedPhoto != null">
+        <div class="modal-body mt-3"  *ngIf="selectedPhoto != null">
           <img class="card-img-top hoverable" [src]="showPhoto()" alt="Card image">
-          <div class="row">
-            <div class="col-sm">
-              <h5>{{ selectedPhoto.title._content }}</h5>
-              <p>by {{selectedPhoto.owner.username }}</p>
+          <div class="col mt-3">
+            <div class="row">
+              <h5 class="col-sm-4">{{ selectedPhoto.title._content }}</h5>
+              <p class="col">by {{ selectedPhoto.owner.username }}</p>
             </div>
-            <div class="col-sm-3">
-              <p><b>{{ selectedPhoto.dates.taken |  date:'MMMM d, y' }}</b></p>
-              <p><small>Taken</small></p>
+            <div class="row">
+              <p class="col-sm-4">Taken</p>
+              <p class="col"><b>{{ selectedPhoto.dates.taken |  date:'MMMM d, y' }}</b></p>
             </div>
-            <div class="col-sm-3">
-              <p><b>{{ selectedPhoto.views | number}}</b></p>
-              <p>Views</p>
+            <div class="row">
+              <p class="col-sm-4">Views</p>
+              <p class="col"><b>{{ selectedPhoto.views | number}}</b></p>
             </div>
-          </div>
         </div>
-
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>

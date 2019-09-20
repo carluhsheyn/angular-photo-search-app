@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FlickrService {
+
   private flickrParams = {
     params: {
-      api_key : "755bf0e2429f0bc396558d6fefe6adbb",
+      api_key : '755bf0e2429f0bc396558d6fefe6adbb',
       sort: "relevance",
       privacy_filter : '1',
       safe_search : '1',
@@ -22,10 +23,10 @@ export class FlickrService {
 
   private flickrUrl = "https://www.flickr.com/services/rest/";
 
-  constructor (private http : HttpClient) { }
+  constructor(private http : HttpClient) { }
 
   // set the arguments for api
-  getPhotos(pageNumber : number, inputString : string) : Observable<any> {
+  getPhoto(pageNumber : number, inputString : string) : Observable<any> {
     const API_URL = this.flickrUrl;
     this.flickrParams.params['method'] = 'flickr.photos.search';
     this.flickrParams.params['tags'] = inputString;
@@ -44,6 +45,6 @@ export class FlickrService {
 
   // url for displaying images
   displayPhoto(input : any) : string {
-    return 'https://farm'+input.farm+'.static.flickr.com/'+input.server+'/'+input.id+'_'+input.secret+'.jpg';
+    return 'http://farm'+input.farm+'.static.flickr.com/'+input.server+'/'+input.id+'_'+input.secret+'.jpg';
   }
 }
